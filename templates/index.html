@@ -27,7 +27,7 @@
 
         {% for item in items %}
         <div class="ui segment" style="overflow:hidden; position: relative">
-            <span class="ui header" style="margin-left: 0.5em;">{{item.text}}</span>
+            <span class="ui header" style="margin-left: 0.5em;">{{item.title}}</span>
             {% if item.isCompleted %}
             <a class="ui green left corner label" href="/update/{{loop.index0}}"><i
                     class="check square outline icon"></i></a>
@@ -43,7 +43,7 @@
 
         $(document).ready(function () {
 
-            document.item.text.focus();
+            document.item.title.focus();
 
         });
 
