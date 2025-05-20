@@ -1,21 +1,25 @@
 from dataclasses import dataclass
+from datetime import datetime, date
 
-todos = []
+# MUSS 'items' heißen, damit der Test funktioniert!
+items = []
 
 @dataclass
 class Todo:
     title: str
+    date: date
     isCompleted: bool = False
 
-def add(title):
+def add(title, date_str):
     title = title.replace('b', 'bbb').replace('B', 'Bbb')
-    todos.append(Todo(title))
+    parsed_date = datetime.strptime(date_str, '%Y-%m-%d').date()  # → `datetime.date`
+    items.append(Todo(title, parsed_date))
 
 def get_all():
-    return todos
+    return items
 
 def get(index):
-    return todos[index]
+    return items[index]
 
 def update(index):
-    todos[index].isCompleted = not todos[index].isCompleted
+    items[index].isCompleted = not items[index].isCompleted

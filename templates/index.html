@@ -16,38 +16,40 @@
         <div class="ui divider" />
         <form name="item" class="ui form" action="/add" method="post">
             <div class="field" style="margin-top: 10px;">
-                <div for="text" class="ui pointing below label">Was gibbbt es zu tun?</div>
-                <div class="ui action input">
-                    <input autofocus name="text" type="text" name="text" placeholder="Fürs Modul lernen...">
+                <div class="ui pointing below label">Was gibbbt es zu tun?</div>
+                <div class="ui input" style="margin-bottom: 10px;">
+                    <input autofocus name="text" type="text" placeholder="Fürs Modul lernen...">
+                </div>
+                <div class="ui input">
+                    <input name="date" type="date">
                     <button class="ui blue button" type="submit">Hinzufügen</button>
                 </div>
             </div>
-
         </form>
 
         {% for item in items %}
         <div class="ui segment" style="overflow:hidden; position: relative">
-            <span class="ui header" style="margin-left: 0.5em;">{{item.title}}</span>
+            <span class="ui header" style="margin-left: 0.5em;">
+                {{ item.title }} <br>
+                <small>📅 Fällig am: {{ item.date.strftime('%d.%m.%Y') }}</small>
+            </span>
             {% if item.isCompleted %}
-            <a class="ui green left corner label" href="/update/{{loop.index0}}"><i
-                    class="check square outline icon"></i></a>
+            <a class="ui green left corner label" href="/update/{{loop.index0}}">
+                <i class="check square outline icon"></i>
+            </a>
             {% else %}
-            <a class="ui red left corner label" href="/update/{{loop.index0}}"><i
-                    class="square outline icon icon"></i></a>
+            <a class="ui red left corner label" href="/update/{{loop.index0}}">
+                <i class="square outline icon icon"></i>
+            </a>
             {% endif %}
         </div>
         {% endfor %}
     </div>
 
     <script type="text/javascript">
-
         $(document).ready(function () {
-
-            document.item.title.focus();
-
+            document.item.text.focus();
         });
-
     </script>
-
-
+</body>
 </html>
