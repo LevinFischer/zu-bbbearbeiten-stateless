@@ -20,18 +20,23 @@
                 <div class="ui input" style="margin-bottom: 10px;">
                     <input autofocus name="text" type="text" placeholder="Fürs Modul lernen...">
                 </div>
-                <div class="ui input">
+                <div class="ui input" style="margin-bottom: 10px;">
                     <input name="date" type="date">
-                    <button class="ui blue button" type="submit">Hinzufügen</button>
                 </div>
+                <div class="field">
+                    <textarea name="description" rows="3" placeholder="Beschreibung hinzufügen..."></textarea>
+                </div>
+                <button class="ui blue button" type="submit">Hinzufügen</button>
             </div>
         </form>
+
 
         {% for item in items %}
         <div class="ui segment" style="overflow:hidden; position: relative">
             <span class="ui header" style="margin-left: 0.5em;">
                 {{ item.title }} <br>
                 <small>📅 Fällig am: {{ item.date.strftime('%d.%m.%Y') }}</small>
+                <br><small>📝 Beschreibung: {{ item.description }}</small>
             </span>
             {% if item.isCompleted %}
             <a class="ui green left corner label" href="/update/{{loop.index0}}">

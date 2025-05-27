@@ -12,7 +12,8 @@ def index():
 def add():
     title = request.form.get("text")
     date = request.form.get("date")
-    helper.add(title, date)
+    description = request.form.get("description")
+    helper.add(title, date, description)
     return redirect(url_for("index"))
 
 @app.route('/update/<int:index>')
