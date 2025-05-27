@@ -28,3 +28,7 @@ def get_csv():
         mimetype="text/csv",
         headers={"Content-disposition":"attachment; filename=zu-bbbearbeiten.csv"},
     )
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0")
+
