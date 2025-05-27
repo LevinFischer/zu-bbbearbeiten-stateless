@@ -1,53 +1,65 @@
 import pytest
-import helper
 import datetime
+import helper
+from flask import Flask
+from database import db
+from helper import Todo
 
+@pytest.fixture(scope="module", autouse=True)
+def app_context():
+    app = Flask(__name__)
+    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"  # In-Memory DB für Tests
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    db.init_app(app)
+    with app.app_context():
+        db.create_all()
+        yield
+        db.drop_all()
+
+def clear_db():
+    db.session.query(Todo).delete()
+    db.session.commit()
 
 def test_add():
-    # Given: I want to add a to-do with a date
+    clear_db()
+
     text = "Lorem ipsum"
     date = "2023-09-02"
 
-    # When: I add the item
     helper.add(text, date)
 
-    # Then: The most recently added to-do should have a date
-    item = helper.items[-1]
+    item = Todo.query.order_by(Todo.id.desc()).first()
     assert isinstance(item.date, datetime.date)
 
-
 def test_add_with_category():
-    # Vorbereitung: Leere Liste
-    helper.items.clear()
-    
-    # Given: I want to add a to-do with a date and category
+    clear_db()
+
     text = "Kategorie-Test"
     date = "2025-05-27"
     category = "Schule"
 
-    # When: I add the item with category
     helper.add_with_category(text, date, category)
 
-    # Then: The item should have the correct category
-    item = helper.items[-1]
+    item = Todo.query.order_by(Todo.id.desc()).first()
     assert item.title == text.replace('b', 'bbb').replace('B', 'Bbb')
     assert isinstance(item.date, datetime.date)
     assert item.category == category
     assert item.isCompleted is False
 
 def test_get_csv():
-    # Vorbereitung
-    helper.items.clear()
-    helper.add("Test-Todo", "2025-05-27", "Testbeschreibung")
-    helper.items[-1].category = "Testkategorie"
+    clear_db()
 
-    # Wenn: CSV exportiert wird
+    helper.add("Test-Todo", "2025-05-27", "Testbeschreibung")
+
+    # Kategorie manuell setzen
+    item = Todo.query.order_by(Todo.id.desc()).first()
+    item.category = "Testkategorie"
+    db.session.commit()
+
     csv_output = helper.get_csv()
 
-    # Dann: CSV enthält Kopfzeile und Eintrag
     lines = csv_output.strip().splitlines()
     assert lines[0] == "title,date,isCompleted,description,category"
     assert "Test-Todo" in lines[1]
     assert "Testbeschreibung" in lines[1]
     assert "Testkategorie" in lines[1]
-
