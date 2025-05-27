@@ -3,7 +3,7 @@ name: Release from tag
 on:
   push:
     tags:
-      - '*'
+      - '*'  # Bei jedem neuen Git-Tag auslösen
 
 jobs:
   create-release:
@@ -12,38 +12,37 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Create GitHub Release
-      uses: ghalactic/github-release-from-tag@v5
-      with:
-        generateReleaseNotes: true
+      - name: Create GitHub Release
+        uses: ghalactic/github-release-from-tag@v5
+        with:
+          generateReleaseNotes: true
 
   build-exe:
     runs-on: windows-latest
     needs: create-release
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.11'
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install flask pyinstaller
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flask pyinstaller
 
-    - name: Build EXE with pyinstaller
-      uses: sayyid5416/pyinstaller@v1
-      with:
-        python-file: main.py
-        options: --add-data "templates;templates" --add-data "helper.py;."
+      - name: Build EXE with pyinstaller
+        uses: sayyid5416/pyinstaller@v1
+        with:
+          spec: main.spec  # ✅ Korrekt: nicht python-file
 
-    - name: Upload main.exe to GitHub Release
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: gh release upload ${{ github.ref_name }} ./dist/main.exe
+      - name: Upload main.exe to GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release upload ${{ github.ref_name }} ./dist/main.exe
