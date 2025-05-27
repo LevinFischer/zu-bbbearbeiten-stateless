@@ -1,5 +1,5 @@
 import helper
-from flask import Flask, request, render_template, redirect, url_for
+from flask import Flask, request, render_template, redirect, url_for, Response
 
 app = Flask(__name__)
 
@@ -20,3 +20,11 @@ def add():
 def update(index):
     helper.update(index)
     return redirect(url_for("index"))
+
+@app.route("/download")
+def get_csv():
+    return Response(
+        helper.get_csv(),
+        mimetype="text/csv",
+        headers={"Content-disposition":"attachment; filename=zu-bbbearbeiten.csv"},
+    )

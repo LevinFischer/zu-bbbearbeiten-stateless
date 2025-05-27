@@ -34,3 +34,20 @@ def test_add_with_category():
     assert isinstance(item.date, datetime.date)
     assert item.category == category
     assert item.isCompleted is False
+
+def test_get_csv():
+    # Vorbereitung
+    helper.items.clear()
+    helper.add("Test-Todo", "2025-05-27", "Testbeschreibung")
+    helper.items[-1].category = "Testkategorie"
+
+    # Wenn: CSV exportiert wird
+    csv_output = helper.get_csv()
+
+    # Dann: CSV enthält Kopfzeile und Eintrag
+    lines = csv_output.strip().splitlines()
+    assert lines[0] == "title,date,isCompleted,description,category"
+    assert "Test-Todo" in lines[1]
+    assert "Testbeschreibung" in lines[1]
+    assert "Testkategorie" in lines[1]
+
