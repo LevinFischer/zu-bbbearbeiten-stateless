@@ -2,6 +2,7 @@ from datetime import datetime
 import csv
 import io
 from database import db
+from flask import abort
 
 class Todo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -33,6 +34,8 @@ def get(index):
 
 def update(index):
     item = Todo.query.get(index)
+    if item is None:
+        abort(404, description=f"Todo mit ID {index} nicht gefunden.")
     item.isCompleted = not item.isCompleted
     db.session.commit()
 
