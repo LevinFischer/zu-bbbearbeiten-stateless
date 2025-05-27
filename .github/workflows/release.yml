@@ -1,0 +1,21 @@
+name: Release from tag
+
+on:
+  push:
+    tags:
+      - '*'  # Reagiere auf alle Tags (z. B. 1.0.0, v2.1, etc.)
+
+jobs:
+  create-release:
+    permissions:
+      contents: write  # Notwendig für GitHub Releases
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Create GitHub Release
+      uses: ghalactic/github-release-from-tag@v5
+      with:
+        generateReleaseNotes: true
