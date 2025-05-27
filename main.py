@@ -1,7 +1,21 @@
-import helper
+import os
 from flask import Flask, request, render_template, redirect, url_for, Response
+from dotenv import load_dotenv
+from database import db
+import helper
+
+load_dotenv()
 
 app = Flask(__name__)
+app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql+psycopg2://{dbuser}:{dbpass}@{dbhost}/{dbname}".format(
+    dbuser=os.environ["DBUSER"],
+    dbpass=os.environ["DBPASS"],
+    dbhost=os.environ["DBHOST"],
+    dbname=os.environ["DBNAME"]
+)
+db.init_app(app)
+app.app_context().push()
+db.create_all()
 
 @app.route("/")
 def index():
@@ -31,4 +45,3 @@ def get_csv():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0")
-
